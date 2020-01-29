@@ -1,14 +1,12 @@
-import com.drdaemos.sqlparser.lexer.Lexer
+import com.drdaemos.sqlparser.lexer.SqlLexer
 import com.drdaemos.sqlparser.tokens.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItems
 import org.junit.jupiter.api.Test
-import java.util.regex.Pattern
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-internal class LexerTest {
-    private val lexer: Lexer = Lexer()
+internal class SqlLexerTest {
+    private val lexer: SqlLexer = SqlLexer()
 
 
     @Test

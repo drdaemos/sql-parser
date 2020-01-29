@@ -1,6 +1,6 @@
 package com.drdaemos.sqlparser
 
-import com.drdaemos.sqlparser.lexer.Lexer
+import com.drdaemos.sqlparser.lexer.SqlLexer
 import com.drdaemos.sqlparser.queries.SelectQuery
 
 fun main() {
@@ -10,7 +10,7 @@ fun main() {
 class Application {
     init {
         val testString = "SELECT * FROM test"
-        val tokens = Lexer().getTokens(testString)
+        val tokens = SqlLexer().getTokens(testString)
         println(tokens.toString())
         println(SelectQuery().toString())
     }
