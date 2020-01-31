@@ -1,3 +1,5 @@
+package com.drdaemos.sqlparser.lexer
+
 import com.drdaemos.sqlparser.lexer.SqlLexer
 import com.drdaemos.sqlparser.tokens.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -7,7 +9,6 @@ import kotlin.test.assertEquals
 
 internal class SqlLexerTest {
     private val lexer: SqlLexer = SqlLexer()
-
 
     @Test
     fun testGetTokens() {

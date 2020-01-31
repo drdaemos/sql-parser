@@ -12,7 +12,7 @@ object Extract {
 
     fun keyword(input: MatchedToken) : Keyword? {
         val keywords = listOf(
-            "SELECT", "DISTINCT", "INTO", "TOP", "FROM", "WHERE", "HAVING", "LIMIT", "OFFSET", "ON", "AS", "DESC", "ASC"
+            "SELECT", "DISTINCT", "INTO", "TOP", "FROM", "WHERE", "HAVING", "LIMIT", "OFFSET", "ON", "AS", "DESC", "ASC", "ALL"
         )
         return if (keywords.contains(input.value.toUpperCase())) Keyword(input.value, input.start) else null
     }
