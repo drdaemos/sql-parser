@@ -5,6 +5,6 @@ import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
 import com.drdaemos.sqlparser.tokens.Identifier
 import com.drdaemos.sqlparser.tokens.Token
 
-// <table-reference> ::= <table-identifier> [<alias>] | <subquery> <alias> | <joined-table>
-class TableIdentifier(value: String, var alias: String? = null) : TerminalNode(value) {
+// <limit-clause> ::= "LIMIT" numeric ["OFFSET" numeric]
+class LimitClause(value: String, var offset: String? = null) : TerminalNode(value) {
 }

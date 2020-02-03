@@ -3,11 +3,11 @@ package com.drdaemos.sqlparser.lexer
 class SqlLexer : Lexer(
     detectors = listOf(
         TokenDetector(
-            "^\\s*([a-zA-Z]+\\s[a-zA-Z]+)",
+            "^\\s*([a-zA-Z]+\\s[a-zA-Z]+)\\s",
             Extract::keyphrase
         ),
         TokenDetector(
-            "^\\s*([a-zA-Z]+)",
+            "^\\s*([a-zA-Z]+)\\s",
             Extract::keyword
         ),
         TokenDetector(
@@ -16,7 +16,7 @@ class SqlLexer : Lexer(
         ),
         // keyword operators
         TokenDetector(
-            "^\\s*(AND|OR|NOT|NOT NULL|LIKE|BETWEEN|ALL|ANY|SOME|EXISTS|IN|IS NULL|IS NOT NULL)",
+            "^\\s*(AND|OR|NOT|NOT NULL|LIKE|BETWEEN|ALL|ANY|SOME|EXISTS|IN|IS NULL|IS NOT NULL)\\s",
             Extract::operator
         ),
         // math operators

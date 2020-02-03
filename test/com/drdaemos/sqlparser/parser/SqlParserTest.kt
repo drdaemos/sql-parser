@@ -1,11 +1,13 @@
 package com.drdaemos.sqlparser.parser
 
+import com.drdaemos.sqlparser.lexer.SqlLexer
 import com.drdaemos.sqlparser.structure.*
 import com.drdaemos.sqlparser.tokens.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class SqlParserTest {
+    private val lexer: SqlLexer = SqlLexer()
     private val parser: SqlParser = SqlParser()
 
     @Test
@@ -16,15 +18,17 @@ internal class SqlParserTest {
             Keyword("FROM", 9),
             Identifier("db", 14)
         )
-        val expected = Statement().init(listOf(
-            SelectQuery().init(listOf(
-                SelectList().init(listOf(
-                    SelectReference().init("*")
+        val expected = Statement(listOf(
+            SelectQuery(listOf(
+                SelectList(listOf(
+                    SelectReference(listOf(
+                        ColumnIdentifier("*")
+                    ))
                 )),
-                TableExpression().init(listOf(
-                    FromClause().init(listOf(
-                        TableReference().init(listOf(
-                            TableIdentifier().init("db")
+                TableExpression(listOf(
+                    FromClause(listOf(
+                        TableReference(listOf(
+                            TableIdentifier("db")
                         ))
                     ))
                 ))
@@ -38,33 +42,37 @@ internal class SqlParserTest {
     @Test
     fun testParseComplex() {
         val query = "SELECT p.id, i.amount FROM products p LEFT JOIN inventory i ON p.id = i.product_id WHERE p.category_id = 1 LIMIT 10 OFFSET 5"
-        val expected = Statement().init(listOf(
-            SelectQuery().init(listOf(
-                SelectList().init(listOf(
-                    SelectReference().init("p.id"),
-                    SelectReference().init("p.amount")
+        val expected = Statement(listOf(
+            SelectQuery(listOf(
+                SelectList(listOf(
+                    SelectReference(listOf(
+                        ColumnIdentifier("p.id")
+                    )),
+                    SelectReference(listOf(
+                        ColumnIdentifier("i.amount")
+                    ))
                 )),
-                TableExpression().init(listOf(
-                    FromClause().init(listOf(
-                        TableReference().init(listOf(
-                            TableIdentifier().init("products", "p")
+                TableExpression(listOf(
+                    FromClause(listOf(
+                        TableReference(listOf(
+                            TableIdentifier("products", "p")
                         )),
-                        JoinedTable().init(listOf(
-                            TableReference().init(listOf(
-                                TableIdentifier().init("inventory", "i")
+                        JoinedTable(listOf(
+                            TableReference(listOf(
+                                TableIdentifier("inventory", "i")
                             )),
-                            JoinCondition().init(listOf(
+                            JoinCondition(listOf(
                                 FilterCondition(listOf(
                                     Predicate(listOf(
-                                        ColumnIdentifier().init("p.id"),
-                                        ComparisonOperator().init("="),
-                                        ColumnIdentifier().init("i.product_id")
+                                        ColumnIdentifier("p.id"),
+                                        ComparisonOperator("="),
+                                        ColumnIdentifier("i.product_id")
                                     ))
                                 ))
                             ))
                         ))
                     )),
-                    WhereClause().init(listOf(
+                    WhereClause(listOf(
                         FilterCondition(listOf(
                             Predicate(listOf(
                                 ColumnIdentifier("p.category_id"),
@@ -73,11 +81,12 @@ internal class SqlParserTest {
                             ))
                         ))
                     )),
-                    LimitClause().init("10", "5")
+                    LimitClause("10", "5")
                 ))
             ))
         ))
 
+        val tokens = lexer.getTokens(query)
         val actual = parser.compileTree(tokens)
         assertEquals(expected.toString(), actual.toString())
     }

@@ -5,6 +5,6 @@ import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
 import com.drdaemos.sqlparser.tokens.Identifier
 import com.drdaemos.sqlparser.tokens.Token
 
-// <table-reference> ::= <table-identifier> [<alias>] | <subquery> <alias> | <joined-table>
-class TableIdentifier(value: String, var alias: String? = null) : TerminalNode(value) {
+// <comparison-operator> ::= "=" | ">" | "<" | "<=" | ">=" | "LIKE"
+class ComparisonOperator(value: String) : TerminalNode(value) {
 }

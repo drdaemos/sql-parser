@@ -1,13 +1,13 @@
 package com.drdaemos.sqlparser.structure
 
+import com.drdaemos.sqlparser.parser.Compiler
 import com.drdaemos.sqlparser.tokens.Token
 
 // <statement> ::= <select-query>
-class Statement(tokens: List<Token> = emptyList(), position: Int = 0) : Node(tokens, position) {
+class Statement(children: List<Node> = mutableListOf()) : Node(children) {
 
-    override fun compile() : Int {
-        append(SelectQuery(tokens, position))
-
-        return position
+    override fun compile(compiler: Compiler) : Node {
+        compiler.append(this, SelectQuery())
+        return this
     }
 }

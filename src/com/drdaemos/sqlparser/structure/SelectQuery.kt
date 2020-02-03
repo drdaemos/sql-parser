@@ -1,6 +1,7 @@
 package com.drdaemos.sqlparser.structure
 
 import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
+import com.drdaemos.sqlparser.parser.Compiler
 import com.drdaemos.sqlparser.tokens.Token
 
 enum class SetQuantifier {
@@ -8,28 +9,29 @@ enum class SetQuantifier {
 }
 
 // <select-query> ::= "SELECT" [<set-quantifier>] <select-list> <table-expression>
-class SelectQuery(tokens: List<Token> = emptyList(), position: Int = 0) : Node(tokens, position) {
+class SelectQuery(children: List<Node> = mutableListOf()) : Node(children) {
 
     var setQuantifier: SetQuantifier = SetQuantifier.ALL
-    override fun compile(): Int {
-        val token = getNextToken()
-        if (token.expr.toUpperCase() !== "SELECT") {
-            throw UnrecognizedTokenException("First token is not SELECT in SelectQuery", --position)
+    override fun compile(compiler: Compiler): Node {
+        val token = compiler.getNextToken()
+        if (token.expr.toUpperCase() != "SELECT") {
+            compiler.rewind()
+            throw UnrecognizedTokenException("First token is not SELECT", this)
         }
-        checkSetQuantifier()
+        checkSetQuantifier(compiler)
 
-        append(SelectList(tokens, position))
-        append(TableExpression(tokens, position))
+        compiler.append(this, SelectList())
+        compiler.append(this, TableExpression())
 
-        return position
+        return this
     }
 
-    private fun checkSetQuantifier() {
-        val token = getNextToken()
-        if (token.expr.toUpperCase() === "DISTINCT") {
+    private fun checkSetQuantifier(compiler: Compiler) {
+        val token = compiler.getNextToken()
+        if (token.expr.toUpperCase() == "DISTINCT") {
             setQuantifier = SetQuantifier.DISTINCT
         } else {
-            rewind()
+            compiler.rewind()
         }
     }
 }
