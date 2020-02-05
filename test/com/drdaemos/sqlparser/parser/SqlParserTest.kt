@@ -56,7 +56,9 @@ internal class SqlParserTest {
                     FromClause(listOf(
                         TableReference(listOf(
                             TableIdentifier("products", "p")
-                        )),
+                        ))
+                    )),
+                    JoinClause(listOf(
                         JoinedTable(listOf(
                             TableReference(listOf(
                                 TableIdentifier("inventory", "i")
@@ -81,7 +83,10 @@ internal class SqlParserTest {
                             ))
                         ))
                     )),
-                    LimitClause("10", "5")
+                    LimitClause(listOf(
+                        LiteralValue("10"),
+                        LiteralValue("5")
+                    ))
                 ))
             ))
         ))

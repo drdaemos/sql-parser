@@ -7,15 +7,18 @@ import com.drdaemos.sqlparser.tokens.Comma
 import com.drdaemos.sqlparser.tokens.Identifier
 import com.drdaemos.sqlparser.tokens.Token
 
-// <where-clause> ::= "WHERE" <filter-condition>
-class WhereClause(children: List<Node> = mutableListOf()) : Node(children) {
+// <join-clause> ::= <joined-table> *[<joined-table>]
+class JoinClause(children: List<Node> = mutableListOf()) : Node(children) {
     override fun compile(compiler: Compiler): Node {
-        val token = compiler.getNextToken()
-        if (token.expr.toUpperCase() != "WHERE") {
-            compiler.rewind()
-            throw UnrecognizedTokenException("First token is not WHERE", this)
+        compiler.append(this, JoinedTable())
+        var repeats = true
+        while (repeats) {
+            try {
+                compiler.append(this, JoinedTable())
+            } catch (e: ParserException) {
+                repeats = false
+            }
         }
-        compiler.append(this, FilterCondition())
         return this
     }
 }

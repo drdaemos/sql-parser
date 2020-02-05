@@ -9,7 +9,12 @@ import com.drdaemos.sqlparser.tokens.Token
 // <join-condition> ::= "ON" <filter-condition>
 class JoinCondition(children: List<Node> = mutableListOf()) : Node(children) {
     override fun compile(compiler: Compiler): Node {
-        TODO()
+        val token = compiler.getNextToken()
+        if (token.expr.toUpperCase() != "ON") {
+            compiler.rewind()
+            throw UnrecognizedTokenException("First token is not ON", this)
+        }
+        compiler.append(this, FilterCondition())
         return this
     }
 }

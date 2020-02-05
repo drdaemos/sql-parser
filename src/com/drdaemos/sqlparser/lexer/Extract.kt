@@ -5,7 +5,7 @@ import com.drdaemos.sqlparser.tokens.*
 object Extract {
     fun keyphrase(input: MatchedToken) : Keyword? {
         val keywords = listOf(
-            "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "FULL JOIN", "ORDER BY", "GROUP BY"
+            "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "CROSS JOIN", "UNION JOIN", "FULL JOIN", "ORDER BY", "GROUP BY"
         )
         return if (keywords.contains(input.value.toUpperCase())) Keyword(input.value, input.start) else null
     }

@@ -16,7 +16,7 @@ class SqlLexer : Lexer(
         ),
         // keyword operators
         TokenDetector(
-            "^\\s*(AND|OR|NOT|NOT NULL|LIKE|BETWEEN|ALL|ANY|SOME|EXISTS|IN|IS NULL|IS NOT NULL)\\s",
+            "^\\s*(AND|OR|IS NOT NULL|IS NULL|NOT NULL|NULL|NOT|LIKE|BETWEEN|ALL|ANY|SOME|EXISTS|IN)\\s",
             Extract::operator
         ),
         // math operators

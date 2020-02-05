@@ -11,18 +11,7 @@ class SelectList(children: List<Node> = mutableListOf()) : Node(children) {
     override fun compile(compiler: Compiler): Node {
         compiler.append(this, SelectReference())
 
-        var token = compiler.getNextToken()
-        while (token is Comma) {
-            try {
-                compiler.append(this, SelectReference())
-                token = compiler.getNextToken()
-            } catch (e: UnrecognizedTokenException) {
-                compiler.rewind()
-                throw UnrecognizedTokenException("Comma not followed by reference", this)
-            }
-        }
-
-        compiler.rewind()
+        compiler.repeatedAppend(this, { SelectReference() }, true)
 
         return this
     }

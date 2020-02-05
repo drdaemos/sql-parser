@@ -17,7 +17,38 @@ class JoinedTable(children: List<Node> = mutableListOf()) : Node(children) {
 
     var joinType: JoinType = JoinType.INNER
     override fun compile(compiler: Compiler): Node {
-        TODO()
+        checkJoinType(compiler)
+        compiler.append(this, TableReference())
+        compiler.append(this, JoinCondition(), true)
+
         return this
+    }
+
+    private fun checkJoinType(compiler: Compiler) {
+        val token = compiler.getNextToken()
+        when (token.expr.toUpperCase()) {
+            "INNER JOIN" -> {
+                joinType = JoinType.INNER
+            }
+            "LEFT JOIN" -> {
+                joinType = JoinType.LEFT
+            }
+            "RIGHT JOIN" -> {
+                joinType = JoinType.RIGHT
+            }
+            "FULL JOIN" -> {
+                joinType = JoinType.FULL
+            }
+            "UNION JOIN" -> {
+                joinType = JoinType.UNION
+            }
+            "CROSS JOIN" -> {
+                joinType = JoinType.CROSS
+            }
+            else -> {
+                compiler.rewind()
+                throw UnrecognizedTokenException("Unknown JOIN type", this)
+            }
+        }
     }
 }

@@ -6,6 +6,8 @@ import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
 import com.drdaemos.sqlparser.structure.Node
 import com.drdaemos.sqlparser.structure.SelectQuery
 import com.drdaemos.sqlparser.structure.Statement
+import com.drdaemos.sqlparser.structure.TableReference
+import com.drdaemos.sqlparser.tokens.Comma
 import com.drdaemos.sqlparser.tokens.Token
 
 class Compiler(private val tokens: List<Token>, private var position: Int = 0) {
@@ -19,10 +21,28 @@ class Compiler(private val tokens: List<Token>, private var position: Int = 0) {
         }
     }
 
-    fun append(parent: Node, child: Node) {
-        child.compile(this)
+    fun append(parent: Node, child: Node, optional: Boolean = false) {
+        try {
+            child.compile(this)
+        } catch (e: ParserException) {
+            if (optional) return else throw e
+        }
         (parent.children as MutableList<Node>).add(child)
         child.parent = parent
+    }
+
+    fun repeatedAppend(parent: Node, childConstructor: () -> Node, optional: Boolean = false) {
+        var token = getNextToken()
+        while (token is Comma) {
+            try {
+                append(parent, childConstructor(), optional)
+                token = getNextToken()
+            } catch (e: UnrecognizedTokenException) {
+                rewind()
+                throw UnrecognizedTokenException("Comma not followed by repetition", parent)
+            }
+        }
+        rewind()
     }
 
     fun rewind() {
