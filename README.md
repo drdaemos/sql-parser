@@ -1,6 +1,6 @@
 # sql-parser
 
-Simple SQL lexer and parser written in Kotlin. 
+Simple SQL lexer and recursive descent parser written in Kotlin. 
 
 ## Supports
 
