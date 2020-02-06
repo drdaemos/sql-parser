@@ -30,6 +30,21 @@ println(tokens.toString())
 println(statementTree.toString())
 ```
 
+As a result, you receive a compiled AST of the whole statement. It is possible to iterate over children and gather various sorts of info via `accept(Visitor)` function. One example is `SelectQueryInfo` object, that can gather general info about the query in Text format.
+
+```kotlin
+val query = "SELECT author.name, count(book.id), sum(book.cost) " +
+        "FROM author " +
+        "LEFT JOIN book ON (author.id = book.author_id) " +
+        "GROUP BY author.name " +
+        "HAVING COUNT(*) > 1 AND SUM(book.cost) > 500 " +
+        "LIMIT 10"
+val tokens = SqlLexer().getTokens(query)
+val statementTree = SqlParser().compileTree(tokens)
+val queryInfo = SelectQueryInfo()
+queryInfo.gather(statementTree)
+```
+
 ## Supported Grammar
 
 ```bnf
