@@ -50,4 +50,12 @@ class JoinedTable(children: List<Node> = mutableListOf(), var joinType: JoinType
             }
         }
     }
+
+    override fun toSqlString(): String {
+        var message = joinType.toString() + " JOIN " + children.first().toSqlString()
+        if (children.size > 1) {
+            message += " ON " + children.last().toSqlString()
+        }
+        return message
+    }
 }

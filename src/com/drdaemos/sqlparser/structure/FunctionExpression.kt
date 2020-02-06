@@ -39,4 +39,8 @@ class FunctionExpression(children: List<Node> = mutableListOf(), var alias: Stri
         }
         return this
     }
+
+    override fun toSqlString(): String {
+        return children.first().toSqlString() + "(" + children.last().toSqlString() + ")"
+    }
 }

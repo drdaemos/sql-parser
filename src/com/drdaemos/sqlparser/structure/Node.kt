@@ -17,6 +17,7 @@ abstract class Node(val children: List<Node> = mutableListOf()) : AcceptsVisitor
 
     override fun accept(visitor: Visitor) {
         visitor.visitNode(this)
+        children.forEach { it.accept(visitor) }
     }
 
     abstract fun compile(compiler: Compiler) : Node
@@ -24,6 +25,12 @@ abstract class Node(val children: List<Node> = mutableListOf()) : AcceptsVisitor
     override fun toString(): String {
         var message = this.javaClass.simpleName
         message += if (children.isNotEmpty()) ": [" +  children.joinToString { it.toString() } + "]" else ""
+        return message
+    }
+
+    open fun toSqlString(): String {
+        var message = ""
+        message += if (children.isNotEmpty()) children.joinToString(" ") { it.toSqlString() } else ""
         return message
     }
 }

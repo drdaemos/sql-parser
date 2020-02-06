@@ -1,5 +1,6 @@
 package com.drdaemos.sqlparser.structure
 
+import com.drdaemos.sqlparser.exceptions.EndOfTokens
 import com.drdaemos.sqlparser.exceptions.ParserException
 import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
 import com.drdaemos.sqlparser.parser.Compiler
@@ -23,16 +24,18 @@ class LimitClause(children: List<Node> = mutableListOf()) : Node(children) {
         } catch (e: NumberFormatException) {
         }
 
-        if (compiler.getNextToken().expr.toUpperCase() != "OFFSET") {
-            compiler.rewind()
-            return this
-        }
-        token = compiler.getNextToken()
-        compiler.append(this, LiteralValue(token.expr))
         try {
-            offset = token.expr.trim('"', '\'').toInt()
-        } catch (e: NumberFormatException) {
-        }
+            if (compiler.getNextToken().expr.toUpperCase() != "OFFSET") {
+                compiler.rewind()
+                return this
+            }
+            token = compiler.getNextToken()
+            compiler.append(this, LiteralValue(token.expr))
+            try {
+                offset = token.expr.trim('"', '\'').toInt()
+            } catch (e: NumberFormatException) {
+            }
+        } catch (e: EndOfTokens) {}
 
         return this
     }

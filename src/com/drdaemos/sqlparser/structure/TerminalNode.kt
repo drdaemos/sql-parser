@@ -12,4 +12,8 @@ abstract class TerminalNode(var value: String) : Node() {
     override fun toString(): String {
         return this.javaClass.simpleName + ": \"" + value + "\""
     }
+
+    override fun toSqlString(): String {
+        return value
+    }
 }
