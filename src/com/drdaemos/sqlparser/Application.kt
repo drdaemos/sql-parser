@@ -10,7 +10,7 @@ fun main() {
             "LEFT JOIN book ON (author.id = book.author_id) " +
             "GROUP BY author.name " +
             "HAVING COUNT(*) > 1 AND SUM(book.cost) > 500 " +
-            "LIMIT 10"
+            "LIMIT 10;"
     val tokens = SqlLexer().getTokens(query)
     val statementTree = SqlParser().compileTree(tokens)
     val queryInfo = SelectQueryInfo()

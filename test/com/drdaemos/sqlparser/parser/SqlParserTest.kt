@@ -41,7 +41,11 @@ internal class SqlParserTest {
 
     @Test
     fun testParseComplex() {
-        val query = "SELECT p.id, i.amount FROM products p LEFT JOIN inventory i ON p.id = i.product_id WHERE p.category_id = 1 LIMIT 10 OFFSET 5"
+        val query = "SELECT p.id, i.amount " +
+                "FROM products p " +
+                "LEFT JOIN inventory i ON p.id = i.product_id " +
+                "WHERE p.category_id = 1 " +
+                "LIMIT 10 OFFSET 5"
         val expected = Statement(listOf(
             SelectQuery(listOf(
                 SelectList(listOf(
@@ -98,7 +102,10 @@ internal class SqlParserTest {
 
     @Test
     fun testPredicateGroups() {
-        val query = "SELECT * FROM products p LEFT JOIN inventory i ON (p.id = i.product_id) WHERE p.category_id = 1 AND (i.test > 0 OR i.test2 < 0)"
+        val query = "SELECT * " +
+                "FROM products p " +
+                "LEFT JOIN inventory i ON (p.id = i.product_id) " +
+                "WHERE p.category_id = 1 AND (i.test > 0 OR i.test2 < 0)"
         val expected = Statement(listOf(
             SelectQuery(listOf(
                 SelectList(listOf(
