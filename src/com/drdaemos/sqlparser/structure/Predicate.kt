@@ -11,6 +11,7 @@ import com.drdaemos.sqlparser.tokens.Token
 // <predicate> ::= <column-identifier> "IS" ["NOT"] "NULL" | <column-identifier> <comparison-operator> <expected-reference> | <column-identifier> "BETWEEN" <literal> "AND" <literal>
 // <expected-reference> ::= <column-identifier> | <literal>
 class Predicate(children: List<Node> = mutableListOf()) : Node(children) {
+    var group: Int = 0
     override fun compile(compiler: Compiler): Node {
         var token = compiler.getNextToken()
         if (token !is Identifier) {
