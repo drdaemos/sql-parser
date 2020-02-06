@@ -13,9 +13,8 @@ enum class JoinType {
 // <joined-table> ::= <join-type> "JOIN" <table-reference> [<join-condition>]
 // <join-type> ::= "INNER" | <outer-join-type> ["OUTER"] | "UNION" | "CROSS"
 // <outer-join-type> ::= "LEFT" | "RIGHT" | "FULL"
-class JoinedTable(children: List<Node> = mutableListOf()) : Node(children) {
+class JoinedTable(children: List<Node> = mutableListOf(), var joinType: JoinType = JoinType.INNER) : Node(children) {
 
-    var joinType: JoinType = JoinType.INNER
     override fun compile(compiler: Compiler): Node {
         checkJoinType(compiler)
         compiler.append(this, TableReference())

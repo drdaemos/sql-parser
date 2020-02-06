@@ -5,19 +5,15 @@ import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
 import com.drdaemos.sqlparser.parser.Compiler
 import com.drdaemos.sqlparser.tokens.*
 
-// <predicate> ::= <column-identifier> "IS" ["NOT"] "NULL" | <column-identifier> <comparison-operator> <compared-reference> | <column-identifier> <in-operator> <containing-reference> | <column-identifier> "BETWEEN" <literal-value> "AND" <literal-value> |
+// <predicate> ::= <left-hand-side> "IS" ["NOT"] "NULL" | <left-hand-side> <comparison-operator> <compared-reference> | <left-hand-side> <in-operator> <containing-reference> | <left-hand-side> "BETWEEN" <literal-value> "AND" <literal-value> |
+// <left-hand-side> ::= <column-identifier> | <function-expression>
 // <compared-reference> ::= <column-identifier> | <literal> | <subquery>
 // <containing-reference> ::= <literal-value-list> | <subquery>
 class Predicate(children: List<Node> = mutableListOf()) : Node(children) {
     override fun compile(compiler: Compiler): Node {
-        var token = compiler.getNextToken()
-        if (token !is Identifier) {
-            compiler.rewind()
-            throw UnrecognizedTokenException("First token in Predicate is not Identifier", this)
-        }
-        compiler.append(this, ColumnIdentifier(token.expr))
+        appendLeftHandSide(compiler)
 
-        token = compiler.getNextToken()
+        val token = compiler.getNextToken()
         if (token !is Operator) {
             compiler.rewind()
             throw UnrecognizedTokenException("No operator in Predicate", this)
@@ -38,6 +34,20 @@ class Predicate(children: List<Node> = mutableListOf()) : Node(children) {
             else -> throw UnrecognizedTokenException("Unknown token", this)
         }
         return this
+    }
+
+    private fun appendLeftHandSide(compiler: Compiler) {
+        when (val token = compiler.getNextToken()) {
+            is Identifier -> compiler.append(this, ColumnIdentifier(token.expr))
+            is SqlFunction -> {
+                compiler.rewind()
+                compiler.append(this, FunctionExpression())
+            }
+            else -> {
+                compiler.rewind()
+                throw UnrecognizedTokenException("First token in Predicate is not Identifier", this)
+            }
+        }
     }
 
     private fun appendExpectedReference(compiler: Compiler) {

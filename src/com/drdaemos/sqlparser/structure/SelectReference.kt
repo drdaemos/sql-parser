@@ -4,12 +4,9 @@ import com.drdaemos.sqlparser.exceptions.EndOfTokens
 import com.drdaemos.sqlparser.exceptions.ParserException
 import com.drdaemos.sqlparser.exceptions.UnrecognizedTokenException
 import com.drdaemos.sqlparser.parser.Compiler
-import com.drdaemos.sqlparser.tokens.BlockDelimiter
-import com.drdaemos.sqlparser.tokens.Identifier
-import com.drdaemos.sqlparser.tokens.Operator
-import com.drdaemos.sqlparser.tokens.Token
+import com.drdaemos.sqlparser.tokens.*
 
-// <select-reference> ::= <column-identifier> [<alias>] | <function-call> | <subquery> <alias>
+// <select-reference> ::= <column-identifier> [<alias>] | <function-call> [alias>] | <subquery> [<alias>]
 class SelectReference(children: List<Node> = mutableListOf()) : Node(children) {
     override fun compile(compiler: Compiler): Node {
         when (val token = compiler.getNextToken()) {
@@ -26,7 +23,12 @@ class SelectReference(children: List<Node> = mutableListOf()) : Node(children) {
                 compiler.append(this, subquery)
                 subquery.alias = compiler.parseAlias()
             }
-            // TODO: process function call
+            is SqlFunction -> {
+                compiler.rewind()
+                val function = FunctionExpression()
+                compiler.append(this, function)
+                function.alias = compiler.parseAlias()
+            }
         }
         return this
     }

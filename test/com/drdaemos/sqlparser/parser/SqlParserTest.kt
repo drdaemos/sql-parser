@@ -72,7 +72,7 @@ internal class SqlParserTest {
                                     ))
                                 ))
                             ))
-                        ))
+                        ), JoinType.LEFT)
                     )),
                     WhereClause(listOf(
                         FilterCondition(listOf(
@@ -130,7 +130,7 @@ internal class SqlParserTest {
                                     ))
                                 ))
                             ))
-                        ))
+                        ), JoinType.LEFT)
                     )),
                     WhereClause(listOf(
                         FilterCondition(listOf(
@@ -168,7 +168,7 @@ internal class SqlParserTest {
 
     @Test
     fun testSubqueryAliasInFeatures() {
-        val query = "SELECT id, (SELECT max_price FROM table) AS max_price FROM table2 WHERE id IN (1,2,3)"
+        val query = "SELECT id, (SELECT MAX(price) FROM table) AS max_price FROM table2 WHERE id IN (1,2,3)"
         val expected = Statement(listOf(
             SelectQuery(listOf(
                 SelectList(listOf(
@@ -180,7 +180,10 @@ internal class SqlParserTest {
                             SelectQuery(listOf(
                                 SelectList(listOf(
                                     SelectReference(listOf(
-                                        ColumnIdentifier("max_price")
+                                        FunctionExpression(listOf(
+                                            FunctionIdentifier("MAX"),
+                                            FunctionBody("price")
+                                        ), "max_price")
                                     ))
                                 )),
                                 TableExpression(listOf(

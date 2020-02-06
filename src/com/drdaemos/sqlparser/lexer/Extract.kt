@@ -19,7 +19,7 @@ object Extract {
 
     fun sqlFunction(input: MatchedToken) : SqlFunction? {
         val keywords = listOf(
-            "SUM", "COUNT", "AVG", "LOWER", "UPPER", "CONCAT", "FORMAT", "LEN"
+            "SUM", "COUNT", "AVG", "LOWER", "UPPER", "CONCAT", "FORMAT", "LEN", "MAX", "MIN", "FIRST", "LAST", "UCASE", "LCASE", "MID", "ROUND", "NOW"
         )
         return if (keywords.contains(input.value.toUpperCase())) SqlFunction(input.value, input.start) else null
     }
