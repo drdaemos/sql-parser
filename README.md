@@ -45,6 +45,8 @@ val queryInfo = SelectQueryInfo()
 queryInfo.gather(statementTree)
 ```
 
+![Query info inspection](https://user-images.githubusercontent.com/1313693/73945284-86037f00-490d-11ea-8171-f583afac22d6.png)
+
 ## Supported Grammar
 
 ```bnf
