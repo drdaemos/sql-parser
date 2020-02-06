@@ -165,4 +165,60 @@ internal class SqlParserTest {
         val actual = parser.compileTree(tokens)
         assertEquals(expected.toString(), actual.toString())
     }
+
+    @Test
+    fun testSubqueryAliasInFeatures() {
+        val query = "SELECT id, (SELECT max_price FROM table) AS max_price FROM table2 WHERE id IN (1,2,3)"
+        val expected = Statement(listOf(
+            SelectQuery(listOf(
+                SelectList(listOf(
+                    SelectReference(listOf(
+                        ColumnIdentifier("id")
+                    )),
+                    SelectReference(listOf(
+                        Subquery(listOf(
+                            SelectQuery(listOf(
+                                SelectList(listOf(
+                                    SelectReference(listOf(
+                                        ColumnIdentifier("max_price")
+                                    ))
+                                )),
+                                TableExpression(listOf(
+                                    FromClause(listOf(
+                                        TableReference(listOf(
+                                            TableIdentifier("table")
+                                        ))
+                                    ))
+                                ))
+                            ))
+                        ), "max_price")
+                    ))
+                )),
+                TableExpression(listOf(
+                    FromClause(listOf(
+                        TableReference(listOf(
+                            TableIdentifier("table2")
+                        ))
+                    )),
+                    WhereClause(listOf(
+                        FilterCondition(listOf(
+                            Predicate(listOf(
+                                ColumnIdentifier("id"),
+                                InOperator("IN"),
+                                LiteralValueList(listOf(
+                                    LiteralValue("1"),
+                                    LiteralValue("2"),
+                                    LiteralValue("3")
+                                ))
+                            ))
+                        ))
+                    ))
+                ))
+            ))
+        ))
+
+        val tokens = lexer.getTokens(query)
+        val actual = parser.compileTree(tokens)
+        assertEquals(expected.toString(), actual.toString())
+    }
 }

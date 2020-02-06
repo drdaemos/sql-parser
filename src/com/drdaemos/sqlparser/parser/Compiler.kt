@@ -8,11 +8,13 @@ import com.drdaemos.sqlparser.structure.SelectQuery
 import com.drdaemos.sqlparser.structure.Statement
 import com.drdaemos.sqlparser.structure.TableReference
 import com.drdaemos.sqlparser.tokens.Comma
+import com.drdaemos.sqlparser.tokens.Identifier
+import com.drdaemos.sqlparser.tokens.Keyword
 import com.drdaemos.sqlparser.tokens.Token
 
 class Compiler(private val tokens: List<Token>, private var position: Int = 0) {
 
-    fun compile() : Node {
+    fun compile(): Node {
         try {
             return Statement().compile(this)
         } catch (e: UnrecognizedTokenException) {
@@ -45,12 +47,34 @@ class Compiler(private val tokens: List<Token>, private var position: Int = 0) {
         rewind()
     }
 
-    fun rewind() {
-        position--
+    fun parseAlias(): String? {
+        try {
+            val token = getNextToken()
+            when {
+                token is Identifier -> {
+                    return token.expr
+                }
+                token.expr.toUpperCase() == "AS" -> {
+                    val nextToken = getNextToken()
+                    if (nextToken is Identifier) {
+                        return token.expr
+                    }
+                    rewind()
+                    throw UnrecognizedTokenException("Alias keyword AS not followed by identifier")
+                }
+                else -> rewind()
+            }
+        } catch (e: EndOfTokens) {
+        }
+        return null
+    }
+
+    fun rewind(times: Int = 1) {
+        position -= times
     }
 
     @Throws(ParserException::class)
-    fun getNextToken() : Token {
+    fun getNextToken(): Token {
         if (hasNext()) {
             return tokens[position++]
         }
