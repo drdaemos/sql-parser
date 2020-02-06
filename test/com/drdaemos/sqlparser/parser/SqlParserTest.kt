@@ -224,4 +224,90 @@ internal class SqlParserTest {
         val actual = parser.compileTree(tokens)
         assertEquals(expected.toString(), actual.toString())
     }
+
+    @Test
+    fun testOriginalQuery() {
+        val query = "SELECT author.name, count(book.id), sum(book.cost) " +
+                "FROM author " +
+                "LEFT JOIN book ON (author.id = book.author_id) " +
+                "GROUP BY author.name " +
+                "HAVING COUNT(*) > 1 AND SUM(book.cost) > 500 " +
+                "LIMIT 10;"
+        val expected = Statement(listOf(
+            SelectQuery(listOf(
+                SelectList(listOf(
+                    SelectReference(listOf(
+                        ColumnIdentifier("author.name")
+                    )),
+                    SelectReference(listOf(
+                        FunctionExpression(listOf(
+                            FunctionIdentifier("count"),
+                            FunctionBody("book.id")
+                        ))
+                    )),
+                    SelectReference(listOf(
+                        FunctionExpression(listOf(
+                            FunctionIdentifier("sum"),
+                            FunctionBody("book.cost")
+                        ))
+                    ))
+                )),
+                TableExpression(listOf(
+                    FromClause(listOf(
+                        TableReference(listOf(
+                            TableIdentifier("author")
+                        ))
+                    )),
+                    JoinClause(listOf(
+                        JoinedTable(listOf(
+                            TableReference(listOf(
+                                TableIdentifier("book")
+                            )),
+                            JoinCondition(listOf(
+                                FilterCondition(listOf(
+                                    PredicateGroup(listOf(
+                                        FilterCondition(listOf(
+                                            Predicate(listOf(
+                                                ColumnIdentifier("author.id"),
+                                                ComparisonOperator("="),
+                                                ColumnIdentifier("book.author_id")
+                                            ))
+                                        ))
+                                    ))
+                                ))
+                            ))
+                        ))
+                    )),
+                    GroupByClause(listOf(
+                        ColumnIdentifier("author.name")
+                    )),
+                    HavingClause(listOf(
+                        FilterCondition(listOf(
+                            Predicate(listOf(
+                                FunctionExpression(listOf(
+                                    FunctionIdentifier("COUNT"),
+                                    FunctionBody("*")
+                                )),
+                                ComparisonOperator(">"),
+                                LiteralValue("1")
+                            )),
+                            BooleanOperator("AND"),
+                            Predicate(listOf(
+                                FunctionExpression(listOf(
+                                    FunctionIdentifier("SUM"),
+                                    FunctionBody("book.cost")
+                                )),
+                                ComparisonOperator(">"),
+                                LiteralValue("500")
+                            ))
+                        ))
+                    ))
+                ))
+            ))
+        ))
+
+        val tokens = lexer.getTokens(query)
+        val actual = parser.compileTree(tokens)
+        assertEquals(expected.toString(), actual.toString())
+    }
 }

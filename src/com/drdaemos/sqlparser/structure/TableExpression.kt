@@ -12,6 +12,9 @@ class TableExpression(children: List<Node> = mutableListOf()) : Node(children) {
         compiler.append(this, FromClause())
         compiler.append(this, JoinClause(), true)
         compiler.append(this, WhereClause(), true)
+        compiler.append(this, GroupByClause(), true)
+        compiler.append(this, OrderByClause(), true)
+        compiler.append(this, HavingClause(), true)
         compiler.append(this, LimitClause(), true)
         return this
     }
